@@ -107,18 +107,16 @@ namespace LUA
             GL.Rotate(x, 1.0f, 0.0f, 0.0f);
             GL.Rotate(y, 0.0f, 1.0f, 0.0f);
 
-
-
             GL.Begin(PrimitiveType.Triangles);
-            GL.Color4(1.0f, 0.0f, 0.0f, 1.0f);
-            GL.Vertex3(0.0f, 1.0f, 0.0f);
-            GL.Color4(0.0f, 1.0f, 0.0f, 1.0f);
-            GL.Vertex3(-1.0f, 0.0f, 1.0f);
-            GL.Color4(0.0f, 0.0f, 1.0f, 1.0f);
-            GL.Vertex3(1.0f, 0.0f, -1.0f);
+                GL.Color4(1.0f, 0.0f, 0.0f, 1.0f);
+                GL.Vertex3(0.0f, 1.0f, 0.0f);
+
+                GL.Color4(0.0f, 1.0f, 0.0f, 1.0f);
+                GL.Vertex3(-1.0f, 0.0f, 1.0f);
+
+                GL.Color4(0.0f, 0.0f, 1.0f, 1.0f);
+                GL.Vertex3(1.0f, 0.0f, -1.0f);
             GL.End();
-
-
 
             WindowContext.SwapBuffers();
         }
@@ -127,7 +125,6 @@ namespace LUA
         {
             WindowContext.MakeCurrent(WindowInfo);
             GL.Viewport(0, 0, panel1.Width, panel1.Height);
-
         }
     }
 }
