@@ -16,7 +16,6 @@ using OpenTK.Platform;
 
 using NLua;
 
-
 namespace LUA
 {
     public partial class Form1 : Form
@@ -52,12 +51,25 @@ namespace LUA
             GL.Disable(EnableCap.CullFace);
             GL.ClearColor(Color.DarkBlue);
 
+
+            try
+            {
+                state.LoadCLRPackage();
+                state.DoString(@" import ('LUA', 'LUA') ");
+            }
+            catch (LuaException ex)
+            {
+                MessageBox.Show(ex.Message, "LUA Package Exception", MessageBoxButtons.OK);
+            }
+
             state["x"] = 0.0;
             state["y"] = 1.0;
             state["fn"] = 0;
             script = textBox1.Text;
 
             timer1.Enabled = true;
+
+
         }
 
         public void Form1_Closing(object sender, EventArgs e)
@@ -70,17 +82,17 @@ namespace LUA
             script = textBox1.Text;
             timer1.Enabled = true;
         }
-        
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             WindowContext.MakeCurrent(WindowInfo);
-        //    GL.Viewport(0, 0, panel1.Width, panel1.Height);
+            //    GL.Viewport(0, 0, panel1.Width, panel1.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit |
                      ClearBufferMask.DepthBufferBit);
 
             cnt++;
             state["fn"] = cnt;
-            label1.Text = string.Format("fn={0} x={1} y={2}",cnt,x,y);
+            label1.Text = string.Format("fn={0} x={1} y={2}", cnt, x, y);
 
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
@@ -92,31 +104,55 @@ namespace LUA
             try
             {
                 state.DoString(script);
-
             }
             catch (LuaException ex)
             {
                 timer1.Enabled = false;
                 MessageBox.Show(ex.Message, "LUA Parser Exception", MessageBoxButtons.OK);
             }
+
             x = state.GetNumber("x");
             y = state.GetNumber("y");
 
             GL.Translate(0.0d, 0.0d, -5.0d);
-            GL.Scale(3,3,3);
+            GL.Scale(3, 3, 3);
             GL.Rotate(x, 1.0f, 0.0f, 0.0f);
             GL.Rotate(y, 0.0f, 1.0f, 0.0f);
 
             GL.Begin(PrimitiveType.Triangles);
-                GL.Color4(1.0f, 0.0f, 0.0f, 1.0f);
-                GL.Vertex3(0.0f, 1.0f, 0.0f);
+            GL.Color4(1.0f, 0.0f, 0.0f, 1.0f);
+            GL.Vertex3(0.0f, 1.0f, 0.0f);
 
-                GL.Color4(0.0f, 1.0f, 0.0f, 1.0f);
-                GL.Vertex3(-1.0f, 0.0f, 1.0f);
+            GL.Color4(0.0f, 1.0f, 0.0f, 1.0f);
+            GL.Vertex3(-1.0f, 0.0f, 1.0f);
 
-                GL.Color4(0.0f, 0.0f, 1.0f, 1.0f);
-                GL.Vertex3(1.0f, 0.0f, -1.0f);
+            GL.Color4(0.0f, 0.0f, 1.0f, 1.0f);
+            GL.Vertex3(1.0f, 0.0f, -1.0f);
             GL.End();
+
+            try
+            {
+                var opt = state.DoString("return GetPoints()")[0] as LuaTable;
+                if (opt != null)
+                {
+                    for (var i = 0; i < opt.Keys.Count; i++)
+                    {
+                        var pt = (LuaTable)opt[i];
+                        if (pt != null)
+                        {
+                            GL.Begin(PrimitiveType.Points);
+                            GL.Color3((double) pt["R"], (double) pt["G"], (double) pt["B"]);
+                            GL.Vertex3((double) pt["X"], (double) pt["Y"], (double) pt["Z"]);
+                            GL.End();
+                        }
+                    }
+                }
+            }
+            catch (LuaException ex)
+            {
+                timer1.Enabled = false;
+                MessageBox.Show(ex.Message, "LUA Parser Exception", MessageBoxButtons.OK);
+            }
 
             WindowContext.SwapBuffers();
         }
@@ -125,6 +161,11 @@ namespace LUA
         {
             WindowContext.MakeCurrent(WindowInfo);
             GL.Viewport(0, 0, panel1.Width, panel1.Height);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
