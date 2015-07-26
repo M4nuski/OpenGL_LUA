@@ -163,9 +163,5 @@ namespace LUA
             GL.Viewport(0, 0, panel1.Width, panel1.Height);
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

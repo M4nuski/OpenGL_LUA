@@ -123,15 +123,15 @@ y = y + 0.3
 
 GetPoints = function ()
 	res = {}	
-for z = 0, 35 do
-res[z] = {};
-	res[z].X = math.sin(math.rad(z*10));
-	res[z].Y = 0;
-	res[z].Z = math.cos(math.rad(z*10));
-	res[z].R = 1;
-	res[z].G = 1;
-	res[z].B = 1;
-end
+	for z = 0, 35 do
+		res[z] = {};
+		res[z].X = math.sin(math.rad(z*10));
+		res[z].Y = 0;
+		res[z].Z = math.cos(math.rad(z*10));
+		res[z].R = 1;
+		res[z].G = 1;
+		res[z].B = 1;
+	end
 	return res;
 end</value>
   </data>
