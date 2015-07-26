@@ -118,19 +118,32 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="textBox1.Text" xml:space="preserve">
-    <value>x = x + 0.1
-y = y + 0.3
+    <value>x = 45;
+y = 0;
+
+count = 36;
 
 GetPoints = function ()
 	res = {}	
-	for z = 0, 35 do
+
+	for z = 0, (count-1)  do
 		res[z] = {};
-		res[z].X = math.sin(math.rad(z*10));
+		  if (fn % count) == z then
+		res[z].X = -math.sin(6.2832 * z / count);
 		res[z].Y = 0;
-		res[z].Z = math.cos(math.rad(z*10));
-		res[z].R = 1;
-		res[z].G = 1;
-		res[z].B = 1;
+		res[z].Z = math.cos(6.2832 * z / count);
+
+			   res[z].R = 1;
+			   res[z].G = 1;
+			   res[z].B = 1;
+		  else 
+			   res[z].R = 1;
+			   res[z].G = 0;
+			   res[z].B = 0;
+		res[z].X = -1.1*math.sin(6.2832 * z / count);
+		res[z].Y = 0;
+		res[z].Z = 1.1* math.cos(6.2832 * z / count);
+		  end
 	end
 	return res;
 end</value>

@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
 using System.Windows.Forms;
 using NLua.Exceptions;
-using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform;
@@ -27,6 +20,8 @@ namespace LUA
         public string script;
         public int cnt;
         public double x, y;
+
+        public Stopwatch sw = new Stopwatch();
 
         public Form1()
         {
@@ -68,8 +63,6 @@ namespace LUA
             script = textBox1.Text;
 
             timer1.Enabled = true;
-
-
         }
 
         public void Form1_Closing(object sender, EventArgs e)
@@ -85,6 +78,8 @@ namespace LUA
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            sw.Start();
+            
             WindowContext.MakeCurrent(WindowInfo);
             //    GL.Viewport(0, 0, panel1.Width, panel1.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit |
@@ -113,6 +108,7 @@ namespace LUA
 
             x = state.GetNumber("x");
             y = state.GetNumber("y");
+            var count = state.GetNumber("count");
 
             GL.Translate(0.0d, 0.0d, -5.0d);
             GL.Scale(3, 3, 3);
@@ -135,7 +131,7 @@ namespace LUA
                 var opt = state.DoString("return GetPoints()")[0] as LuaTable;
                 if (opt != null)
                 {
-                    for (var i = 0; i < opt.Keys.Count; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         var pt = (LuaTable)opt[i];
                         if (pt != null)
@@ -153,7 +149,10 @@ namespace LUA
                 timer1.Enabled = false;
                 MessageBox.Show(ex.Message, "LUA Parser Exception", MessageBoxButtons.OK);
             }
-
+            
+            sw.Stop();
+            Text = (100 * sw.ElapsedMilliseconds / timer1.Interval).ToString("d2") + "%"; 
+            sw.Reset();
             WindowContext.SwapBuffers();
         }
 
